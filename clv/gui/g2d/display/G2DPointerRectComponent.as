@@ -22,10 +22,6 @@ package clv.gui.g2d.display
 		
 		public var autoSize:Boolean = true;
 		
-		public var discardArrange:Boolean = false;
-		
-		private var _daOver:Boolean;
-		
 		public function G2DPointerRectComponent() 
 		{
 			super();
