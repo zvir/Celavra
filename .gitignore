@@ -1,0 +1,17 @@
+/.sync/*
+
+
+
+user.properties
+Icon
+Thumbs.db
+.DS_Store
+
+src/FlexUnitApplication.mxml
+
+.idea
+*.iml
+*.ipr
+*.iws
+
+target/test-classes/TestRunner.mxml
