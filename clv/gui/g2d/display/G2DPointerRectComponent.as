@@ -72,7 +72,6 @@ package clv.gui.g2d.display
 			{
 				node.dispatchNodeMouseSignal(p_contextSignal.type, node, mouseLocalPosition.x, mouseLocalPosition.y, p_contextSignal);
 				
-				
 				if (g2d_node.g2d_mouseOverNode != g2d_node)
 				{
 					g2d_node.dispatchNodeMouseSignal(GMouseSignalType.MOUSE_OVER, g2d_node, mouseLocalPosition.x, mouseLocalPosition.y, p_contextSignal);

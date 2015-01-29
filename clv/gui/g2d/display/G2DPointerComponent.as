@@ -11,7 +11,6 @@ package clv.gui.g2d.display
 	import flash.geom.Rectangle;
 	import flash.ui.Multitouch;
 	import flash.utils.getTimer;
-	import zvr.zvrTools.ZvrPntMath;
 	/**
 	 * ...
 	 * @author Zvir Celavra
@@ -87,6 +86,9 @@ package clv.gui.g2d.display
 			_component.app.pointer.onWheel.remove(onWheel);
 			_component.app.pointer.onMove.remove(onGlobalMove);
 			
+			_component.app.pointer.onMove.remove(chceckBeginDrag);
+			_component.app.pointer.onUp.remove(cancelChceckBeginDrag);
+			
 			if (_pointer.over)
 			{
 				_pointer.over = false;
@@ -124,8 +126,6 @@ package clv.gui.g2d.display
 			
 			_pointer.onUp.dispatch(_pointer);
 			
-			//trace(getTimer() - _pointer.downTime);
-			
 			var d:Number = Math.sqrt((_component.app.pointer.x -_pointer.downX) * (_component.app.pointer.x -_pointer.downX) + (_component.app.pointer.y -_pointer.downY) * (_component.app.pointer.y -_pointer.downY));
 			
 			if (getTimer() - _pointer.downTime < _pointer.pointTimeInterval && _pointer.inside && d < _pointer.pointTrigerDistance)
@@ -146,8 +146,6 @@ package clv.gui.g2d.display
 		{
 			if (!pointer.enabled) return;
 			
-			//if (e.target != e.dispatcher) return;
-			
 			update(e);
 			
 			_pointer.over = true;
@@ -164,8 +162,6 @@ package clv.gui.g2d.display
 		private function onMouseOut(e:GNodeMouseSignal):void 
 		{
 			if (!pointer.enabled) return;
-			
-			//if (e.target != e.dispatcher) return;
 			
 			update(e);
 			
@@ -184,24 +180,13 @@ package clv.gui.g2d.display
 		private function onMouseMove(e:GNodeMouseSignal):void 
 		{
 			if (!pointer.enabled) return;
+			
 			_pointer.lastX = _pointer.x;
 			_pointer.lastY = _pointer.y;
 			
 			update(e);
 			
 			_pointer.onMove.dispatch(_pointer);
-			
-			if (_pointer.down && !_pointer.drag)
-			{
-				var d:Number = Math.sqrt((_component.app.pointer.x -_pointer.downX) * (_component.app.pointer.x -_pointer.downX) + (_component.app.pointer.y -_pointer.downY) * (_component.app.pointer.y -_pointer.downY));
-				
-				if (d > _pointer.dragTrigerDistance && _pointer.dragTrigerDistance != 0)
-				{
-					_pointer.drag = true;
-					_pointer.onDragBegin.dispatch(_pointer);
-					_component.app.pointer.onUp.add(appUp);
-				}
-			}
 			
 		}
 		
@@ -230,8 +215,8 @@ package clv.gui.g2d.display
 			_pointer.y = e.localY;
 		}
 		
-		{
 		public function updateGlobal():void 
+		{
 			_pointer.lastGlobalX = _pointer.globalX;
 			_pointer.lastGlobalY = _pointer.globalY;
 			
@@ -268,9 +253,42 @@ package clv.gui.g2d.display
 			
 			if (_pointer.dragTrigerDistance == 0 && !_pointer.drag)
 			{
-				_pointer.drag = true;
-				_pointer.onDragBegin.dispatch(_pointer);
-				_component.app.pointer.onUp.add(appUp);
+				beginDrag();
+			}
+			
+			if (_pointer.dragTrigerDistance > 0 && !_pointer.drag)
+			{
+				_component.app.pointer.onMove.add(chceckBeginDrag);
+				_component.app.pointer.onUp.addOnce(cancelChceckBeginDrag);
+			}
+		}
+		
+		private function beginDrag():void 
+		{
+			_pointer.drag = true;
+			_pointer.onDragBegin.dispatch(_pointer);
+			_component.app.pointer.onUp.add(appUp);
+			_component.app.pointer.onMove.remove(chceckBeginDrag);
+			_component.app.pointer.onUp.remove(cancelChceckBeginDrag);
+		}
+		
+		private function cancelChceckBeginDrag(p:Pointer):void 
+		{
+			_component.app.pointer.onMove.remove(chceckBeginDrag);
+		}
+		
+		private function chceckBeginDrag(p:Pointer):void 
+		{
+			if (!pointer.enabled) return;
+			
+			if (!_pointer.drag)
+			{
+				var d:Number = Math.sqrt((_component.app.pointer.x -_pointer.downX) * (_component.app.pointer.x -_pointer.downX) + (_component.app.pointer.y -_pointer.downY) * (_component.app.pointer.y -_pointer.downY));
+				
+				if (d > _pointer.dragTrigerDistance && _pointer.dragTrigerDistance != 0)
+				{
+					beginDrag();
+				}
 			}
 		}
 		
