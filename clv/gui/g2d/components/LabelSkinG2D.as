@@ -5,6 +5,8 @@ package clv.gui.g2d.components
 	import clv.gui.g2d.core.SkinG2D;
 	import com.genome2d.components.renderables.GSprite;
 	import com.genome2d.utils.GHAlignType;
+	import zvr.zvrG2D.G2DFont;
+	import zvr.zvrG2D.G2DFontFamily;
 	import zvr.zvrG2D.text.GTextComponent;
 	/**
 	 * ...
@@ -17,6 +19,11 @@ package clv.gui.g2d.components
 		private var _autoSizeToText:Boolean;
 		
 		private var _sprite:GSprite;
+		
+		private var _fontFamily:G2DFontFamily;
+		
+		private var _scale:Number = 1;
+		private var _size:Number;
 		
 		public function LabelSkinG2D() 
 		{
@@ -80,7 +87,24 @@ package clv.gui.g2d.components
 		
 		private function setFont():void 
 		{
-			_label.font = getStyle(TextStyle.FONT);
+			
+			var f:* = getStyle(TextStyle.FONT);
+			
+			trace(f);
+			
+			if (f is G2DFont)
+			{
+				_label.font = f as G2DFont;
+				_fontFamily = null;
+			}
+			
+			if (f is G2DFontFamily)
+			{
+				_fontFamily = f as G2DFontFamily;
+				updateSizeOfFontFamly();
+			}
+			
+			//getStyle(TextStyle.FONT);
 		}
 		
 		private function setAlign():void 
@@ -99,7 +123,22 @@ package clv.gui.g2d.components
 		private function setSize():void 
 		{
 			var v:Number = getStyle(TextStyle.SIZE);
-			if (!isNaN(v)) _label.size = v;
+			
+			if (!isNaN(v)) 
+			{
+				_size = v;
+				
+				if (_fontFamily)
+				{
+					updateSizeOfFontFamly();
+				}
+				else
+				{
+					_label.size = _size * _scale;
+				}
+			}
+			
+			
 		}
 		
 		private function setColor():void 
@@ -119,6 +158,12 @@ package clv.gui.g2d.components
 		
 		override public function preUpdate():void
 		{
+			if (_component.app && _fontFamily && _component.app.scale != _scale)
+			{
+				_scale = _component.app.scale;
+				updateSizeOfFontFamly();
+			}
+			
 			if (_autoSizeToText)
 			{
 				_label.update();
@@ -147,6 +192,14 @@ package clv.gui.g2d.components
 		{
 			super.updateBounds();
 			
+			/*if (sizeDirty)
+			{
+				if (_component.appScale != _scale && _fontFamily)
+				{
+					
+				}
+			}*/
+			
 			if (positionDirty)
 			{
 				if (_autoSizeToText)
@@ -172,6 +225,39 @@ package clv.gui.g2d.components
 				_componentBody.y = int(_component.bounds.y);
 				
 			}
+		}
+		
+		private function updateSizeOfFontFamly():void 
+		{
+			if (!_fontFamily) return;
+			
+			var d:Number = Number.MAX_VALUE;
+			
+			var c:G2DFont;
+			
+			var s:Number = isNaN(_size) ? _fontFamily.fonts[0].size : _size;
+			
+			s *= _scale;
+			
+			for (var i:int = 0; i < _fontFamily.fonts.length; i++) 
+			{
+				var f:G2DFont = _fontFamily.fonts[i];
+				
+				var t:Number = Math.abs(s - f.size);
+				
+				if (t < d) 
+				{
+					c = f;
+					d = t;
+				}
+				
+			}
+			
+			trace(_scale, _size, c.size);
+			
+			_label.size = s;
+			_label.font = c;
+			
 		}
 		
 		/*public function set text(v:String):void

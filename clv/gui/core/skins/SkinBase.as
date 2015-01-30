@@ -17,7 +17,10 @@ package clv.gui.core.skins
 		protected var _styles:StyleManager;
 		
 		private var _positionDirty:Boolean;
+		
 		private var _sizeDirty:Boolean;
+		
+		
 		
 		public function SkinBase()
 		{

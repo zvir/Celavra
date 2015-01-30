@@ -12,6 +12,7 @@ package clv.gui.g2d.components.list
 	public class ListItemHorizontalG2D extends GroupG2D implements IDataListItem
 	{
 		private var _listItem:ListItemHorizontal;
+		private var _index:int;
 		
 		public function ListItemHorizontalG2D() 
 		{
@@ -49,6 +50,18 @@ package clv.gui.g2d.components.list
 		public function getNumOfPositions():Number 
 		{
 			return _listItem.getNumOfPositions();
+		}
+		
+		/* INTERFACE clv.gui.components.dataList.IDataListItem */
+		
+		public function set index(value:int):void 
+		{
+			_index = value;
+		}
+		
+		public function get index():int 
+		{
+			return _index;
 		}
 		
 		public function get next():IDataListItem 

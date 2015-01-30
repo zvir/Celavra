@@ -231,8 +231,8 @@ package clv.gui.core
 					
 					child.update(childCell, scale);
 					
-					childRight = autoSizeWidth ? child.independentBounds.W: child.bounds.right + child.right;
-					childBottom = autoSizeHeight ? child.independentBounds.H : child.bounds.bottom  + child.bottom;
+					childRight = autoSizeWidth ? child.layoutBounds.W: child.bounds.right + child.right;
+					childBottom = autoSizeHeight ? child.layoutBounds.H : child.bounds.bottom  + child.bottom;
 					
 					if (childRight > contentWidth) contentWidth = childRight;
 					if (childBottom > contentHeight) contentHeight = childBottom;
@@ -251,8 +251,9 @@ package clv.gui.core
 			
 			// AUTO SIZE TO CONTENT
 			
-			if (autoSizeWidth) 	width = _contentWidth + cpl + cpr;
-			if (autoSizeHeight) height = _contentHeight + cpt + cpb;
+			if (autoSizeWidth) 	width = (_contentWidth + cpl + cpr) / scale;
+			if (autoSizeHeight) height = (_contentHeight + cpt + cpb) / scale;
+			
 			if (autoSizeWidth || autoSizeHeight) 
 			{
 				updateLayout(cell, scale);
@@ -317,7 +318,11 @@ package clv.gui.core
 		{
 			var i:int = getChildIndex(child as Component);
 			
-			if (i == -1) return;
+			if (i == -1) 
+			{
+				trace("Error:: not a child");
+				return;
+			}
 			
 			childrenDirty = true;
 			
@@ -410,6 +415,9 @@ package clv.gui.core
 		
 		public function setContentsPosition(x:Number, y:Number):void
 		{
+			x = x / _scale;
+			y = y / _scale;
+			
 			if (x == _contentX  && y == _contentY)
 				return;
 			
@@ -548,6 +556,16 @@ package clv.gui.core
 		public function get contentHeight():Number 
 		{
 			return _contentHeight;
+		}
+		
+		public function get contentX():Number 
+		{
+			return _contentX * _scale;
+		}
+		
+		public function get contentY():Number 
+		{
+			return _contentY * _scale;
 		}
 		
 		/*

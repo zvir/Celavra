@@ -13,6 +13,7 @@ package clv.gui.g2d.components
 		
 		private var _toggleList:ToggleList = new ToggleList();
 		
+		
 		public function SwitchGroup() 
 		{
 			super();
@@ -43,6 +44,16 @@ package clv.gui.g2d.components
 		public function get selected():ISelectableComponent 
 		{
 			return _toggleList.selected;
+		}
+		
+		public function get allowNullSelection():Boolean 
+		{
+			return _toggleList.allowNullSelection;
+		}
+		
+		public function set allowNullSelection(value:Boolean):void 
+		{
+			_toggleList.allowNullSelection = value;
 		}
 	}
 

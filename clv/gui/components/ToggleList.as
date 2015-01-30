@@ -13,6 +13,8 @@ package clv.gui.components
 		private var _onSelectedChange:Signal = new Signal(ComponentSignal);
 		private var _selected:ISelectableComponent;
 		
+		public var allowNullSelection:Boolean;
+		
 		public function ToggleList() 
 		{
 			
@@ -32,18 +34,38 @@ package clv.gui.components
 		
 		private function itemSelectedChange(e:ComponentSignal):void 
 		{
+			
+			if (!ISelectableComponent(e.compoenent).selected && allowNullSelection && e.compoenent == _selected)
+			{
+				_selected.enable();
+				
+				_selected = null;
+				
+				_onSelectedChange.dispatch(e);
+				
+				return;
+			}
+			
 			if (ISelectableComponent(e.compoenent).selected)
 			{
 				
 				for (var i:int = 0; i < _items.length; i++) 
 				{
-					if (_items[i] != e.compoenent) _items[i].selected = false;
+					if (_items[i] != e.compoenent) 
+					{
+						_items[i].selected = false;
+						_items[i].enable();
+					}
 				}
 				
 				_selected = e.compoenent as ISelectableComponent;
 				
+				if (!allowNullSelection) _selected.disable();
+				
 				_onSelectedChange.dispatch(e);
+				
 			}
+			
 		}
 		
 		public function get onSelectedChange():Signal 

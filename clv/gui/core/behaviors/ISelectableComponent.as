@@ -23,6 +23,11 @@ package clv.gui.core.behaviors
 		
 		function get selected():Boolean
 		
+		function disable():void;
+		
+		function enable():void;
+		
+		function get enabled():Boolean;
 	}
 	
 }

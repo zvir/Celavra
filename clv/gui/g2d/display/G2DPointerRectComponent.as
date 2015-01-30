@@ -22,6 +22,8 @@ package clv.gui.g2d.display
 		
 		public var autoSize:Boolean = true;
 		
+		public var mask:IPointerRectMask;
+		
 		public function G2DPointerRectComponent() 
 		{
 			super();
@@ -38,13 +40,17 @@ package clv.gui.g2d.display
 		{
 			_component = component;
 			_component.onResized.add(resized);
+			
+			if (!rect) rect = new Rectangle();
+			
+			rect.width = _component.bounds.width;
+			rect.height = _component.bounds.height;
+			
 		}
 		
 		private function resized(s:ComponentSignal):void 
 		{
 			if (!autoSize) return;
-			
-			if (!rect) rect = new Rectangle();
 			
 			rect.width = _component.bounds.width;
 			rect.height = _component.bounds.height;
@@ -68,7 +74,10 @@ package clv.gui.g2d.display
 			
 			var mouseLocalPosition:Point = node.transform.globalToLocal(new Point(p_cameraX, p_cameraY));
 			
-			if (rect.containsPoint(mouseLocalPosition)) 
+			
+			var masked:Boolean = mask && mask.isMasked(p_cameraX, p_cameraY);
+			
+			if (!masked && rect.containsPoint(mouseLocalPosition)) 
 			{
 				node.dispatchNodeMouseSignal(p_contextSignal.type, node, mouseLocalPosition.x, mouseLocalPosition.y, p_contextSignal);
 				

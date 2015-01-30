@@ -8,6 +8,7 @@ package clv.gui.g2d.components
 	import flash.text.Font;
 	import org.osflash.signals.Signal;
 	import zvr.zvrG2D.G2DFont;
+	import zvr.zvrG2D.G2DFontFamily;
 	import zvr.zvrG2D.text.GTextComponent;
 	import zvr.zvrG2D.ZvrG2DMouseRectComponent;
 	import zvr.zvrKeyboard.ZvrInputSignal;
@@ -91,6 +92,16 @@ package clv.gui.g2d.components
 		}
 		
 		public function set font(value:G2DFont):void 
+		{
+			skin.setStyle(TextStyle.FONT, value);
+		}
+		
+		public function get fontFamily():G2DFontFamily 
+		{
+			return skin.getStyle(TextStyle.FONT);
+		}
+		
+		public function set fontFamily(value:G2DFontFamily):void 
 		{
 			skin.setStyle(TextStyle.FONT, value);
 		}

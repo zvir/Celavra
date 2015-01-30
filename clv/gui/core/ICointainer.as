@@ -11,7 +11,9 @@ package clv.gui.core
 	{
 		
 		function getChildIndex(child:IComponent):int;
+		
 		function addChild(child:IComponent):void;
+		
 		function removeChild(child:IComponent):void;
 		
 		function get onContentSizeChange():Signal;
